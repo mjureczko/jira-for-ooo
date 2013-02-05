@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+UNO-Type-Path: 
+RegistrationClassName: org.na.Registration
+Class-Path: 
+
+Name: org/na/Registration.class
+RegistrationClasses: org.na.Dummy
