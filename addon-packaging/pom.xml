@@ -35,7 +35,7 @@
                         <manifestEntries>
                             <RegistrationClassName>org.na.Registration</RegistrationClassName>
                             <name>org/na/Registration.class</name>
-                            <RegistrationClasses>org.na.Dummy</RegistrationClasses>
+                            <RegistrationClasses>org.na.JiraService</RegistrationClasses>
                         </manifestEntries>
                     </archive>
                 </configuration>
