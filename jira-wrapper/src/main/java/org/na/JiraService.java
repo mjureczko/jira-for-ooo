@@ -24,11 +24,22 @@ public class JiraService extends WeakBase implements com.sun.star.lang.XInitiali
 	private com.sun.star.frame.XFrame frame;
 	private static final String m_implementationName = JiraService.class.getName();
 	private static final String[] m_serviceNames = { "com.sun.star.frame.ProtocolHandler" };
-	private final AddonLogic logic;
+	private AddonLogic logic;
 	
 	public JiraService(XComponentContext context) {
 		this.context = context;
-		logic = new AddonLogic(context);
+		try {
+			logic = new AddonLogic(context);
+		} catch (Exception e) {
+			logic = null;
+			StringWriter stringWriter = new StringWriter();
+			PrintWriter writer = new PrintWriter(stringWriter);
+			e.printStackTrace(writer);
+			StringBuffer buffer = stringWriter.getBuffer();
+			String msg = e.getMessage() + " \n  " + buffer.toString();
+			JOptionPane.showMessageDialog(null, msg, e.getClass().getName(),
+					JOptionPane.ERROR_MESSAGE);
+		}
 	};
 	
 	public static XSingleComponentFactory __getComponentFactory(String sImplementationName) {
@@ -57,7 +68,7 @@ public class JiraService extends WeakBase implements com.sun.star.lang.XInitiali
 		if (aURL.Protocol.compareTo("org.na.jiraservice:") == 0) {
 			if (aURL.Path.compareTo("Command0") == 0) {
 				try {
-					logic.fetchDataFromJira();					
+					logic.fetchDataFromJira();
 				} catch (Throwable t) {
 					
 					StringWriter stringWriter = new StringWriter();

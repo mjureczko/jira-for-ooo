@@ -12,7 +12,7 @@ public class WebHelperTest {
 	@Test
 	public void testDownload() throws HttpException, IOException {
 		WebHelper web = new WebHelper();
-		web.download();
+		//web.download();
 	}
 	
 }

@@ -3,7 +3,10 @@
  */
 package org.na;
 
+import javax.swing.JOptionPane;
+
 import com.sun.star.frame.XDesktop;
+import com.sun.star.lang.IndexOutOfBoundsException;
 import com.sun.star.lang.XComponent;
 import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.sheet.XSpreadsheet;
@@ -20,18 +23,37 @@ import com.sun.star.uno.XComponentContext;
  */
 public class ConfigurationPage {
 	
+	private static final int VALUES_COLUMN = 1;
+	private static final int NAMES_COLUMN = 0;
 	private XComponentContext context;
+	private XSpreadsheet cfgSheet;
+	private final String JIRA_URL = "Jira url";
+	private final String JIRA_USER = "User";
+	private final String JIRA_PASS = "Password";
+	private final String JIRA_QUERY = "Jira query";
+	private final String JIRA_TMPMAX = "Jira tmpMax parameter (Jira default is 1000)";
+	private final String SHEET_NAME = "Destination sheet name";
 	
-	public ConfigurationPage(XComponentContext context) {
+	public ConfigurationPage(XComponentContext context) throws Exception {
 		this.context = context;
+		cfgSheet = getFirstSpreadsheet();
 	}
 	
 	public JiraCfgDto readConfig() throws Exception {
-		XSpreadsheet cfgSheet = getFirstSpreadsheet();
-		cfgSheet.getCellByPosition(1, 1).setFormula("first,first");
-		cfgSheet.getCellByPosition(1, 2).setFormula("first,second");
-		
-		return null;
+		renderCfgPage();
+		return readCfgFromSheet();
+	}
+	
+	private JiraCfgDto readCfgFromSheet() throws IndexOutOfBoundsException {
+		JiraCfgDto cfg = new JiraCfgDto();
+		cfg.setJiraUrl(cfgSheet.getCellByPosition(VALUES_COLUMN, 0).getFormula());
+		cfg.setJiraUser(cfgSheet.getCellByPosition(VALUES_COLUMN, 1).getFormula());
+		cfg.setJiraPass(cfgSheet.getCellByPosition(VALUES_COLUMN, 2).getFormula());
+		cfg.setJiraQuery(cfgSheet.getCellByPosition(VALUES_COLUMN, 3).getFormula());
+		cfg.setJiraTmpMax(cfgSheet.getCellByPosition(VALUES_COLUMN, 4).getFormula());
+		cfg.setDestinationSheet(cfgSheet.getCellByPosition(VALUES_COLUMN, 5).getFormula());
+		JOptionPane.showMessageDialog(null, "CFG: " + cfg.toString());
+		return cfg;
 	}
 	
 	private XSpreadsheet getFirstSpreadsheet() throws Exception {
@@ -45,6 +67,15 @@ public class ConfigurationPage {
 				XSpreadsheetDocument.class, component);
 		spreadsheets = sheetDocument.getSheets();
 		Object sheet = spreadsheets.getByName(spreadsheets.getElementNames()[0]);
-		return (XSpreadsheet)UnoRuntime.queryInterface(XSpreadsheet.class, sheet);
+		return (XSpreadsheet) UnoRuntime.queryInterface(XSpreadsheet.class, sheet);
+	}
+	
+	private void renderCfgPage() throws IndexOutOfBoundsException {
+		cfgSheet.getCellByPosition(NAMES_COLUMN, 0).setFormula(JIRA_URL);
+		cfgSheet.getCellByPosition(NAMES_COLUMN, 1).setFormula(JIRA_USER);
+		cfgSheet.getCellByPosition(NAMES_COLUMN, 2).setFormula(JIRA_PASS);
+		cfgSheet.getCellByPosition(NAMES_COLUMN, 3).setFormula(JIRA_QUERY);
+		cfgSheet.getCellByPosition(NAMES_COLUMN, 4).setFormula(JIRA_TMPMAX);
+		cfgSheet.getCellByPosition(NAMES_COLUMN, 5).setFormula(SHEET_NAME);
 	}
 }

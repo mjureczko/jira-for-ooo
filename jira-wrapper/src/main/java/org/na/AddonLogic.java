@@ -21,14 +21,14 @@ public class AddonLogic {
 	private FileHelper fileHelepr = new FileHelper();
 	private ConfigurationPage cfgPage;
 	
-	public AddonLogic(XComponentContext context) {
+	public AddonLogic(XComponentContext context) throws Exception {
 		this.context = context;
 		cfgPage = new ConfigurationPage(context);
 	}
 	
 	public void fetchDataFromJira() throws Exception{	
-		cfgPage.readConfig();
-		String xlsxContent = webHelper.download();
+		JiraCfgDto cfg = cfgPage.readConfig();
+		String xlsxContent = webHelper.download(cfg);
 		String tmpFileName = fileHelepr.saveInTempFile(xlsxContent, ".xls");
 		
 		CalcIOService calc = new CalcIOService(context);
