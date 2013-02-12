@@ -1,18 +1,16 @@
 package org.na;
 
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
 
-import com.google.common.collect.Lists;
+import javax.swing.JOptionPane;
+
+import com.sun.star.lang.XSingleComponentFactory;
+import com.sun.star.lib.uno.helper.Factory;
+import com.sun.star.lib.uno.helper.WeakBase;
+import com.sun.star.registry.XRegistryKey;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
-import com.sun.star.lib.uno.helper.Factory;
-import com.sun.star.lang.XSingleComponentFactory;
-import com.sun.star.registry.XRegistryKey;
-import com.sun.star.lib.uno.helper.WeakBase;
-import javax.swing.JOptionPane;
 
 /**
  */
@@ -28,18 +26,6 @@ public class JiraService extends WeakBase implements com.sun.star.lang.XInitiali
 	
 	public JiraService(XComponentContext context) {
 		this.context = context;
-		try {
-			logic = new AddonLogic(context);
-		} catch (Exception e) {
-			logic = null;
-			StringWriter stringWriter = new StringWriter();
-			PrintWriter writer = new PrintWriter(stringWriter);
-			e.printStackTrace(writer);
-			StringBuffer buffer = stringWriter.getBuffer();
-			String msg = e.getMessage() + " \n  " + buffer.toString();
-			JOptionPane.showMessageDialog(null, msg, e.getClass().getName(),
-					JOptionPane.ERROR_MESSAGE);
-		}
 	};
 	
 	public static XSingleComponentFactory __getComponentFactory(String sImplementationName) {
@@ -68,9 +54,9 @@ public class JiraService extends WeakBase implements com.sun.star.lang.XInitiali
 		if (aURL.Protocol.compareTo("org.na.jiraservice:") == 0) {
 			if (aURL.Path.compareTo("Command0") == 0) {
 				try {
+					logic = new AddonLogic(context);
 					logic.fetchDataFromJira();
-				} catch (Throwable t) {
-					
+				} catch (Throwable t) {					
 					StringWriter stringWriter = new StringWriter();
 					PrintWriter writer = new PrintWriter(stringWriter);
 					t.printStackTrace(writer);

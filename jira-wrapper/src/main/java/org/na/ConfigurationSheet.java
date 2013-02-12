@@ -8,11 +8,9 @@ import javax.swing.JOptionPane;
 import com.sun.star.frame.XDesktop;
 import com.sun.star.lang.IndexOutOfBoundsException;
 import com.sun.star.lang.XComponent;
-import com.sun.star.lang.XMultiComponentFactory;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheets;
-import com.sun.star.table.XCellRange;
 import com.sun.star.uno.Exception;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
@@ -21,7 +19,7 @@ import com.sun.star.uno.XComponentContext;
  * @author marian
  * 
  */
-public class ConfigurationPage {
+public class ConfigurationSheet {
 	
 	private static final int VALUES_COLUMN = 1;
 	private static final int NAMES_COLUMN = 0;
@@ -34,7 +32,7 @@ public class ConfigurationPage {
 	private final String JIRA_TMPMAX = "Jira tmpMax parameter (Jira default is 1000)";
 	private final String SHEET_NAME = "Destination sheet name";
 	
-	public ConfigurationPage(XComponentContext context) throws Exception {
+	public ConfigurationSheet(XComponentContext context) throws Exception {
 		this.context = context;
 		cfgSheet = getFirstSpreadsheet();
 	}
@@ -52,7 +50,7 @@ public class ConfigurationPage {
 		cfg.setJiraQuery(cfgSheet.getCellByPosition(VALUES_COLUMN, 3).getFormula());
 		cfg.setJiraTmpMax(cfgSheet.getCellByPosition(VALUES_COLUMN, 4).getFormula());
 		cfg.setDestinationSheet(cfgSheet.getCellByPosition(VALUES_COLUMN, 5).getFormula());
-		JOptionPane.showMessageDialog(null, "CFG: " + cfg.toString());
+
 		return cfg;
 	}
 	
