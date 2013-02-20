@@ -24,7 +24,7 @@
     </dependencies>
   
     <build>
-<!--     	<finalName>Jira-for-OOo</finalName> -->   	
+    	<finalName>JIRA-for-OOo</finalName>   	
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
