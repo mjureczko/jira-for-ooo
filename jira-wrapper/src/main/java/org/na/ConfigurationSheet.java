@@ -3,7 +3,7 @@
  */
 package org.na;
 
-import javax.swing.JOptionPane;
+import lombok.extern.log4j.Log4j;
 
 import com.sun.star.frame.XDesktop;
 import com.sun.star.lang.IndexOutOfBoundsException;
@@ -16,9 +16,10 @@ import com.sun.star.uno.UnoRuntime;
 import com.sun.star.uno.XComponentContext;
 
 /**
- * @author marian
+ * @author Marian Jureczko
  * 
  */
+@Log4j
 public class ConfigurationSheet {
 	
 	private static final int VALUES_COLUMN = 1;
@@ -50,7 +51,10 @@ public class ConfigurationSheet {
 		cfg.setJiraQuery(cfgSheet.getCellByPosition(VALUES_COLUMN, 3).getFormula());
 		cfg.setJiraTmpMax(cfgSheet.getCellByPosition(VALUES_COLUMN, 4).getFormula());
 		cfg.setDestinationSheet(cfgSheet.getCellByPosition(VALUES_COLUMN, 5).getFormula());
-
+		
+		log.info("url: " + cfg.getJiraUrl() + " user:" + cfg.getJiraUser() + " pass:"
+				+ cfg.getJiraPass() + " query:" + cfg.getJiraQuery() + " tmp:"
+				+ cfg.getJiraTmpMax() + " dest:" + cfg.getDestinationSheet());
 		return cfg;
 	}
 	

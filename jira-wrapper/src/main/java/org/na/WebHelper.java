@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 
+import lombok.extern.log4j.Log4j;
+
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -16,11 +18,13 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.na.exceptions.JiraConnectionException;
 
 /**
- * @author marian
+ * @author Marian Jureczko
  * 
  */
+@Log4j
 public class WebHelper {
 	
 	private HttpClient httpClient;
@@ -28,13 +32,14 @@ public class WebHelper {
 	private boolean authorisation = false;
 	
 	public WebHelper() throws GeneralSecurityException, IOException {
-		Protocol easyhttps = new Protocol("https", (ProtocolSocketFactory)new EasySSLProtocolSocketFactory(), 443);
+		Protocol easyhttps = new Protocol("https",
+				(ProtocolSocketFactory) new EasySSLProtocolSocketFactory(), 443);
 		Protocol.registerProtocol("https", easyhttps);
 		httpClient = new HttpClient();
 	}
 	
 	public String download(JiraCfgDto cfg) throws HttpException, IOException {
-
+		
 		PostMethod post = new PostMethod(cfg.getJiraUrl() + "/login.jsp");
 		post.setRequestHeader(new Header("User-Agent",
 				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:15.0) Gecko/20100101 Firefox/15.0.1"));
@@ -44,6 +49,7 @@ public class WebHelper {
 			post.setFollowRedirects(false);
 			Header header = post.getResponseHeader("Set-Cookie");
 			sessionId = header.getElements()[0].getValue();
+			log.info("SessionId: " + sessionId);
 		}
 		
 		String xlsStream = cfg.getJiraUrl()
@@ -57,7 +63,9 @@ public class WebHelper {
 		}
 		httpClient.executeMethod(get);
 		
-		return get.getResponseBodyAsString();
+		String body = get.getResponseBodyAsString();
+		verifyOutput(body);
+		return body;
 	}
 	
 	private void setCedentials(JiraCfgDto cfg, PostMethod post) {
@@ -74,5 +82,11 @@ public class WebHelper {
 	
 	protected String encodeUrl(String url) throws UnsupportedEncodingException {
 		return URLEncoder.encode(url, "UTF-8");
+	}
+	
+	private void verifyOutput(String body) {
+		if (body.contains("Error report</title>")) {
+			throw new JiraConnectionException(body);
+		}
 	}
 }

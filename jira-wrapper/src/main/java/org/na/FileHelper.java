@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * @author marian
+ * @author Marian Jureczko
  * 
  */
 public class FileHelper {
